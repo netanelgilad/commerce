@@ -6,7 +6,10 @@ import { collections, products } from '@wix/stores';
 import { ApplicationError } from '@wix/stores/build/cjs/src/stores-catalog-v1-product.public';
 import { SortKey, WIX_REFRESH_TOKEN_COOKIE } from 'lib/constants';
 import { cookies } from 'next/headers';
-import { Cart, Collection, Menu, Page, Product } from './types';
+import { Cart, Collection, Menu, Page, Product, ProductVariant } from './types';
+
+const cartesian = <T>(data: T[][]) =>
+  data.reduce((a, b) => a.flatMap((d) => b.map((e) => [...d, e])), [[]] as T[][]);
 
 const reshapeCart = (cart: currentCart.Cart): Cart => {
   return {
@@ -90,7 +93,9 @@ const reshapeProduct = (item: products.Product) => {
     title: item.name!,
     description: item.description!,
     descriptionHtml: item.description!,
-    availableForSale: true,
+    availableForSale:
+      item.stock?.inventoryStatus === 'IN_STOCK' ||
+      item.stock?.inventoryStatus === 'PARTIALLY_OUT_OF_STOCK',
     handle: item.slug!,
     images:
       item.media
@@ -111,7 +116,11 @@ const reshapeProduct = (item: products.Product) => {
         currencyCode: 'USD'
       }
     },
-    options: [],
+    options: (item.productOptions ?? []).map((option) => ({
+      id: option.name!,
+      name: option.name!,
+      values: option.choices!.map((choice) => choice.value)
+    })),
     featuredImage: {
       url: item.media?.mainMedia?.image?.url!,
       altText: item.media?.mainMedia?.image?.altText! ?? 'alt text',
@@ -119,17 +128,34 @@ const reshapeProduct = (item: products.Product) => {
       height: item.media?.mainMedia?.image?.height!
     },
     tags: [],
-    variants: item.variants?.map((variant) => ({
-      id: variant._id!,
-      // todo: is this correct?
-      title: item.name!,
-      price: {
-        amount: String(variant.variant?.priceData?.price),
-        currencyCode: 'USD'
-      },
-      availableForSale: true,
-      selectedOptions: []
-    })),
+    variants: item.manageVariants
+      ? item.variants?.map((variant) => ({
+          id: variant._id!,
+          title: item.name!,
+          price: {
+            amount: String(variant.variant?.priceData?.price),
+            currencyCode: 'USD'
+          },
+          availableForSale: variant.stock?.trackQuantity ? variant.stock.inStock : true,
+          selectedOptions: Object.entries(variant.choices ?? {}).map(([name, value]) => ({
+            name,
+            value
+          }))
+        }))
+      : cartesian(
+          item.productOptions?.map(
+            (x) => x.choices?.map((choice) => ({ name: x.name, value: choice.value })) ?? []
+          ) ?? []
+        ).map((selectedOptions) => ({
+          id: '00000000-0000-0000-0000-000000000000',
+          title: item.name!,
+          price: {
+            amount: String(item.price?.price!),
+            currencyCode: 'USD'
+          },
+          availableForSale: item.stock?.inventoryStatus === 'IN_STOCK',
+          selectedOptions: selectedOptions
+        })),
     seo: {
       description: item.description!,
       title: item.name!
@@ -139,14 +165,25 @@ const reshapeProduct = (item: products.Product) => {
 };
 
 export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: { productId: string; variant?: ProductVariant; quantity: number }[]
 ): Promise<Cart> {
   const { addToCurrentCart } = getWixClient().use(currentCart);
   const { cart } = await addToCurrentCart({
-    lineItems: lines.map(({ merchandiseId, quantity }) => ({
+    lineItems: lines.map(({ productId, variant, quantity }) => ({
       catalogReference: {
-        catalogItemId: merchandiseId,
-        appId: '1380b703-ce81-ff05-f115-39571d94dfcd'
+        catalogItemId: productId,
+        appId: '1380b703-ce81-ff05-f115-39571d94dfcd',
+        ...(variant && {
+          options:
+            variant.id === '00000000-0000-0000-0000-000000000000'
+              ? {
+                  options: variant.selectedOptions.reduce(
+                    (acc, option) => ({ ...acc, [option.name!]: option.value! }),
+                    {} as Record<string, string>
+                  )
+                }
+              : { variantId: variant?.id }
+        })
       },
       quantity
     }))

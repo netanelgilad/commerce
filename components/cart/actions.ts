@@ -1,14 +1,18 @@
 'use server';
 
 import { addToCart, removeFromCart, updateCart } from 'lib/wix';
+import { ProductVariant } from 'lib/wix/types';
 
-export const addItem = async (variantId: string | undefined): Promise<String | undefined> => {
-  if (!variantId) {
+export const addItem = async (
+  productId: string,
+  variant?: ProductVariant
+): Promise<String | undefined> => {
+  if (!productId) {
     return 'Missing product variant ID';
   }
 
   try {
-    await addToCart([{ merchandiseId: variantId, quantity: 1 }]);
+    await addToCart([{ productId, variant, quantity: 1 }]);
   } catch (e) {
     return 'Error adding item to cart';
   }
