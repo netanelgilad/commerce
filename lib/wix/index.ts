@@ -22,7 +22,7 @@ const reshapeCart = (cart: currentCart.Cart): Cart => {
             return acc + Number.parseFloat(item.price?.amount!) * item.quantity!;
           }, 0)
         ),
-        currencyCode: 'USD'
+        currencyCode: cart.currency!
       },
       totalAmount: {
         amount: String(
@@ -30,11 +30,11 @@ const reshapeCart = (cart: currentCart.Cart): Cart => {
             return acc + Number.parseFloat(item.price?.amount!) * item.quantity!;
           }, 0)
         ),
-        currencyCode: 'USD'
+        currencyCode: cart.currency!
       },
       totalTaxAmount: {
         amount: '0',
-        currencyCode: 'USD'
+        currencyCode: cart.currency!
       }
     },
     lines: cart.lineItems!.map((item) => {
@@ -45,7 +45,7 @@ const reshapeCart = (cart: currentCart.Cart): Cart => {
         cost: {
           totalAmount: {
             amount: String(Number.parseFloat(item.price?.amount!) * item.quantity!),
-            currencyCode: 'USD'
+            currencyCode: cart.currency!
           }
         },
         merchandise: {
@@ -109,11 +109,11 @@ const reshapeProduct = (item: products.Product) => {
     priceRange: {
       minVariantPrice: {
         amount: String(item.price?.price!),
-        currencyCode: 'USD'
+        currencyCode: item.price?.currency!
       },
       maxVariantPrice: {
         amount: String(item.price?.price!),
-        currencyCode: 'USD'
+        currencyCode: item.price?.currency!
       }
     },
     options: (item.productOptions ?? []).map((option) => ({
@@ -134,7 +134,7 @@ const reshapeProduct = (item: products.Product) => {
           title: item.name!,
           price: {
             amount: String(variant.variant?.priceData?.price),
-            currencyCode: 'USD'
+            currencyCode: variant.variant?.priceData?.currency
           },
           availableForSale: variant.stock?.trackQuantity ? variant.stock.inStock : true,
           selectedOptions: Object.entries(variant.choices ?? {}).map(([name, value]) => ({
@@ -151,7 +151,7 @@ const reshapeProduct = (item: products.Product) => {
           title: item.name!,
           price: {
             amount: String(item.price?.price!),
-            currencyCode: 'USD'
+            currencyCode: item.price?.currency!
           },
           availableForSale: item.stock?.inventoryStatus === 'IN_STOCK',
           selectedOptions: selectedOptions
