@@ -26,11 +26,11 @@ Together with a Wix Store for headless commerce featuring:
 
 ## Setting up a Wix Store
 
-For this template to fully function, we must have a Wix Store set up before we can start developing.
+For this template to fully function, you need to set up a Wix Store before developing.
 
-Here you can find the [full documentation on getting start with Wix Headless](https://dev.wix.com/docs/go-headless/getting-started/about-headless/about-wix-headless). Explore to the documentation to learn more about building headless experienced with Wix.
+Here you can find the [full documentation on getting start with Wix Headless](https://dev.wix.com/docs/go-headless/getting-started/about-headless/about-wix-headless). Explore to the documentation to learn more about building headless experiences with Wix.
 
-### Create a new Wix Store TLDR
+### Create a new Wix Store TL;DR
 
 - Create a new Project ([Docs](https://dev.wix.com/docs/go-headless/getting-started/setup/general-setup/create-a-project))
   - Be sure to select the ecommerce business solution
@@ -39,22 +39,22 @@ Here you can find the [full documentation on getting start with Wix Headless](ht
 
 ### Preparing your Wix Store content
 
-This template has a few assumptions on the content in your Wix Store. You can always change this to your desired workflow, but to get the initial template fully functioning, following these instrcutions to prepare your store:
+This template makes a few assumptions about the contents of your Wix Store. You can always change things later, but to get the initial template fully functioning, follow these instructions to prepare your store:
 
 #### Categories
 
-In your Wix Dashboard, access the Categories page (under Store Products -> Categories). Create the following categories:
+In your Wix Dashboard, access the **Categories** page (under **Store Products** -> **Categories**)and create the following categories:
 
 - `hidden-homepage-featured-items` - These products will be displayed as featured products above the fold in the website homepage.
-- `hidden-homepage-carousel` - The products you add to this collection will be displayed in a carousel on the bottom of the homepage.
+- `hidden-homepage-carousel` - These products will be displayed in a carousel on the bottom of the homepage.
 
-You can create more collections (like `Clothes`, `House Items`, etc) that will also be displayed on our site in the search results page.
+You can create more collections (like `Clothes`, `House Items`, etc.) that will also be displayed on your site in the search results page.
 
 ### Data Collections
 
-We will be using Wix CMS to manage our site's content like menus and pages. The code in this templates assumes some Data Collections with a certain structure exist in Wix CMS.
+Use Wix CMS to manage your site's content, such as menus and pages. The code in this templates assumes some data collections with a certain structure exist in the Wix CMS.
 
-To create your Data Collections, go to CMS in your Wix Dashboard sidebar. Go ahead and create the following collections using the `Create Collection` button:
+To create your data collections, go to the CMS in your Wix Dashboard sidebar and create the following collections using the `Create Collection` button:
 
 - Pages - stores the content of the dynamic pages of our site
 
@@ -69,7 +69,7 @@ To create your Data Collections, go to CMS in your Wix Dashboard sidebar. Go ahe
   | SEO Description | seoDescription | Text      |
   | Body            | body           | Rich Text |
 
-  - Create some pages for your store, for example: About page, Terms and Conditions, Shipping and Return Policy, FAQ and more. You can use the `Body` field to add the content of the page. The `SEO Title` and `SEO Description` fields will be used to set the SEO metadata of the page.
+  - Create some pages for your store, for example: About page, Terms and Conditions, Shipping and Return Policy, FAQ, and more. You can use the `Body` field to add the content of the page. The `SEO Title` and `SEO Description` fields will be used to set the SEO metadata of the page.
 
 - Menus - stores the top menu and footer menu details
 
@@ -82,14 +82,14 @@ To create your Data Collections, go to CMS in your Wix Dashboard sidebar. Go ahe
   | Slug       | slug  | Text                                          |
 
   - Create menus with the following slugs:
-    - `next-js-frontend-header-menu` - This will be the top menu of the site
-    - `next-js-frontend-footer-menu` - This will be the footer menu of the site
+    - `next-js-frontend-header-menu` - Top menu of the site
+    - `next-js-frontend-footer-menu` - Footer menu of the site
 
 ## Running locally
 
 You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary. Be sure to set the value for WIX_CLIENT_ID to the Client ID from your Store's OAuth App.
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Shopify store.
+> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your store.
 
 1. Install Vercel CLI: `npm i -g vercel`
 2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
