@@ -56,7 +56,7 @@ Use Wix CMS to manage your site's content, such as menus and pages. The code in 
 
 To create your data collections, go to the CMS in your Wix Dashboard sidebar and create the following collections using the `Create Collection` button:
 
-- Pages - stores the content of the dynamic pages of our site
+- Pages - stores the content of the dynamic pages of your site
 
   - Collection Name: `Pages`
   - Collection ID: `Pages`
