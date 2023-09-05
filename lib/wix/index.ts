@@ -119,7 +119,9 @@ const reshapeProduct = (item: products.Product) => {
     options: (item.productOptions ?? []).map((option) => ({
       id: option.name!,
       name: option.name!,
-      values: option.choices!.map((choice) => choice.value)
+      values: option.choices!.map((choice) =>
+        option.optionType === products.OptionType.color ? choice.description : choice.value
+      )
     })),
     featuredImage: {
       url: item.media?.mainMedia?.image?.url!,
@@ -144,7 +146,12 @@ const reshapeProduct = (item: products.Product) => {
         }))
       : cartesian(
           item.productOptions?.map(
-            (x) => x.choices?.map((choice) => ({ name: x.name, value: choice.value })) ?? []
+            (x) =>
+              x.choices?.map((choice) => ({
+                name: x.name,
+                value:
+                  x.optionType === products.OptionType.color ? choice.description : choice.value
+              })) ?? []
           ) ?? []
         ).map((selectedOptions) => ({
           id: '00000000-0000-0000-0000-000000000000',
