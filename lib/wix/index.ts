@@ -327,7 +327,17 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     includeReferencedItems: ['pages']
   })
     .eq('slug', handle)
-    .find();
+    .find()
+    .catch((e) => {
+      if (e.details.applicationError.code === 'WDE0025') {
+        console.error(
+          'Menus collection was not found. Did you forget to create the Menus data collection?'
+        );
+        return { items: [] };
+      } else {
+        throw e;
+      }
+    });
 
   const menu = menus[0];
 
@@ -339,16 +349,30 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   );
 }
 
-export async function getPage(handle: string): Promise<Page> {
+export async function getPage(handle: string): Promise<Page | undefined> {
   const { queryDataItems } = getWixClient().use(items);
 
   const { items: pages } = await queryDataItems({
     dataCollectionId: 'Pages'
   })
     .eq('slug', handle)
-    .find();
+    .find()
+    .catch((e) => {
+      if (e.details.applicationError.code === 'WDE0025') {
+        console.error(
+          'Pages collection was not found. Did you forget to create the Pages data collection?'
+        );
+        return { items: [] };
+      } else {
+        throw e;
+      }
+    });
 
-  const page = pages[0]!;
+  const page = pages[0];
+
+  if (!page) {
+    return undefined;
+  }
 
   return {
     id: page._id!,
@@ -369,8 +393,19 @@ export async function getPages(): Promise<Page[]> {
   const { queryDataItems } = getWixClient().use(items);
 
   const { items: pages } = await queryDataItems({
-    dataCollectionId: 'Pages'
-  }).find();
+    dataCollectionId: 'Pages2'
+  })
+    .find()
+    .catch((e) => {
+      if (e.details.applicationError.code === 'WDE0025') {
+        console.error(
+          'Pages collection was not found. Did you forget to create the Pages data collection?'
+        );
+        return { items: [] };
+      } else {
+        throw e;
+      }
+    });
 
   return pages.map((item) => ({
     id: item._id!,
